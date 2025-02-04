@@ -1,0 +1,28 @@
+name: CI
+
+on:
+    push:
+        branches: ["pipeline"]
+jobs:
+    build-an-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            -  name: Checkout Code
+               uses: actions/checkout@v4
+
+            - name: build services
+              run: docker compose -f docker-compose.yml build
+
+            - name: install dependencies
+              run: |
+                  docker compose run --rm php_coin composer install \
+                    --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+            - name: All tests
+              run: |
+                  docker compose run --rm php_coin ./vendor/bin/phpunit --testdox
+
+            - name: clean up
+              if: always ()
+              run: docker compose down
