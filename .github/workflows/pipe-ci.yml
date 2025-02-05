@@ -26,3 +26,5 @@ jobs:
             - name: clean up
               if: always ()
               run: docker compose down
+
+
